@@ -3,14 +3,13 @@ import {
   Affix,
   Button,
   Card,
-  Center,
   Group,
   Text,
   TextInput,
   ThemeIcon,
 } from '@mantine/core';
 import { useState } from 'react';
-import { ArrowRight, User, X } from 'react-feather';
+import { ArrowRight, Delete, User } from 'react-feather';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 
@@ -79,7 +78,7 @@ export const AddPeople = () => {
                   )
                 }
               >
-                <X size={16} />
+                <Delete size={16} />
               </ActionIcon>
             </Group>
           ))}
