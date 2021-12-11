@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 
 import { useKKContext } from '../core/kk-context';
-import { randColor } from '../util/rand-color';
+import { randColor } from '../util/rand';
 
 export const AddPeople = () => {
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ export const AddPeople = () => {
             setKK({ ...kk, people });
             navigate('/manage-relations');
           }}
-          disabled={Object.keys(people).length === 0}
+          disabled={Object.keys(people).length < 2}
         >
           Continue
         </Button>

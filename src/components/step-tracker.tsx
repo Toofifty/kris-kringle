@@ -96,7 +96,7 @@ export const StepTracker = () => {
         icon={<UserPlus size={16} />}
         color="green"
         available
-        done={!!kk.people}
+        done={kk.people && Object.keys(kk.people).length > 1}
       >
         Add people
       </StepButton>
@@ -119,13 +119,18 @@ export const StepTracker = () => {
         Generate
       </StepButton>
       <StepButton
-        to="/view"
+        to="/results"
         icon={<ShoppingBag size={16} />}
         color="violet"
         available={!!kk.results}
         done={false}
       >
-        View results
+        View results{' '}
+        {kk.view === 'secret' && (
+          <Text size="sm" color="red">
+            (private)
+          </Text>
+        )}
       </StepButton>
     </>
   );

@@ -14,7 +14,7 @@ import { useState } from 'react';
 import { ArrowLeft, ArrowRight, Edit, Edit2, Edit3, User } from 'react-feather';
 import { useNavigate } from 'react-router-dom';
 import { useKKContext } from '../core/kk-context';
-import { randColor } from '../util/rand-color';
+import { randColor } from '../util/rand';
 
 const useStyles = createStyles((theme) => ({
   button: {

@@ -16,6 +16,9 @@ export const KKProvider = ({ children }: { children: React.ReactNode }) => {
       '3': 'Cherry',
       '4': 'Date',
     },
+    disallowedConnections: {
+      '1': ['2'],
+    },
   });
 
   return (
