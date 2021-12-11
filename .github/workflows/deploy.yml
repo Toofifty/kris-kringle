@@ -24,8 +24,8 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: build
-          path: build
+          name: dist
+          path: dist
 
   deploy:
     needs: [build]
@@ -34,7 +34,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v1
         with:
-          name: build
+          name: dist
 
       - name: Deploy files
         uses: appleboy/scp-action@v0.0.6
@@ -42,7 +42,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-          source: 'build/*'
+          source: 'dist/*'
           target: 'kk'
           overwrite: true
           strip_components: 1
