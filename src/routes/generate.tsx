@@ -1,4 +1,4 @@
-import { Button, Card, Center, Group, Loader, Text } from '@mantine/core';
+import { Button, Card, Group, Loader, Text } from '@mantine/core';
 import { useEffect } from 'react';
 import { Eye, EyeOff } from 'react-feather';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -44,52 +44,53 @@ export const Generate = () => {
 
   return (
     <>
-      <Center>
-        <Group direction="column" position="center">
-          {kk.results && kk.results.length > 0 ? (
-            <>
-              <Text size="xl">Done!</Text>
-              <Text>How would you like to view the results?</Text>
-              <Group style={{ alignItems: 'start' }}>
-                <Card shadow="sm" style={{ flex: 1 }}>
-                  <Text mb="lg">
-                    View all results. There's no secrets here.
-                  </Text>
-                  <Button
-                    component={NavLink}
-                    to="/results"
-                    leftIcon={<Eye size={16} />}
-                    onClick={() => setViewMode('all')}
-                  >
-                    View all
-                  </Button>
-                </Card>
-                <Card shadow="sm" style={{ flex: 1 }}>
-                  <Text mb="lg">View results one at a time.</Text>
-                  <Text color="gray" size="sm" mb="lg">
-                    Pass your phone around so people can see who they're gifting
-                    to, privately.
-                  </Text>
-                  <Button
-                    component={NavLink}
-                    to="/results"
-                    leftIcon={<EyeOff size={16} />}
-                    onClick={() => setViewMode('secret')}
-                  >
-                    View privately
-                  </Button>
-                </Card>
+      {kk.results && kk.results.length > 0 ? (
+        <>
+          <Text size="xl">Done!</Text>
+          <Text>How would you like to view the results?</Text>
+          <Group style={{ alignItems: 'start' }}>
+            <Card shadow="sm" style={{ flex: 1 }}>
+              <Group direction="column" position="center">
+                <Text>View all results. </Text>
+                <Text color="gray" size="sm">
+                  There's no secrets here.
+                </Text>
+                <Button
+                  component={NavLink}
+                  to="/results"
+                  leftIcon={<Eye size={16} />}
+                  onClick={() => setViewMode('all')}
+                >
+                  View all
+                </Button>
               </Group>
-            </>
-          ) : (
-            <>
-              <Text size="xl">Generating...</Text>
-              <Text>Sit tight! This won't take long</Text>
-              <Loader />
-            </>
-          )}
-        </Group>
-      </Center>
+            </Card>
+            <Card shadow="sm" style={{ flex: 1 }}>
+              <Group direction="column" position="center">
+                <Text>View results one at a time.</Text>
+                <Text color="gray" size="sm">
+                  Pass your phone around so people can see who they're gifting
+                  to, privately.
+                </Text>
+                <Button
+                  component={NavLink}
+                  to="/results"
+                  leftIcon={<EyeOff size={16} />}
+                  onClick={() => setViewMode('secret')}
+                >
+                  View privately
+                </Button>
+              </Group>
+            </Card>
+          </Group>
+        </>
+      ) : (
+        <>
+          <Text size="xl">Generating...</Text>
+          <Text>Sit tight! This won't take long</Text>
+          <Loader />
+        </>
+      )}
     </>
   );
 };

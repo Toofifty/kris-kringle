@@ -3,6 +3,7 @@ import {
   Affix,
   Button,
   Card,
+  Center,
   Group,
   Text,
   TextInput,
@@ -26,7 +27,7 @@ export const AddPeople = () => {
 
   const addNewPerson = (e: any) => {
     e.preventDefault();
-    setPeople({ ...people, [uuid()]: newPerson });
+    setPeople({ ...(people ?? {}), [uuid()]: newPerson });
     setNewPerson('');
   };
 
@@ -57,9 +58,9 @@ export const AddPeople = () => {
             You haven't added anyone yet.
           </Text>
         )}
-        <Group direction="column" grow>
+        <Group direction="column" grow style={{ minWidth: 300 }}>
           {Object.entries(people).map(([key, name]) => (
-            <Group key={key}>
+            <Group key={key} noWrap>
               <ThemeIcon size={24} variant="light" color={randColor(key)}>
                 <User size={16} />
               </ThemeIcon>

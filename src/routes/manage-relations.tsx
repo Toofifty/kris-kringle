@@ -3,6 +3,7 @@ import {
   Affix,
   Button,
   Card,
+  Center,
   Checkbox,
   createStyles,
   Group,
@@ -101,7 +102,7 @@ export const ManageRelations = () => {
         </Group>
       </Affix>
       <Text size="xl" mb="sm">
-        Let us know who shouldn't be able to gift to who.
+        Let me know who shouldn't be able to gift to who. (optional)
       </Text>
       <Text color="gray" size="sm">
         Useful if you want to make sure that a person can't gift to someone they

@@ -80,7 +80,9 @@ export const Shell = ({ children }: ShellProps) => {
         },
       })}
     >
-      {children}
+      <Group direction="column" position="center">
+        {children}
+      </Group>
     </AppShell>
   );
 };

@@ -96,7 +96,7 @@ export const StepTracker = () => {
         icon={<UserPlus size={16} />}
         color="green"
         available
-        done={kk.people && Object.keys(kk.people).length > 1}
+        done={!!kk.people && Object.keys(kk.people).length > 1}
       >
         Add people
       </StepButton>
