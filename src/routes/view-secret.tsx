@@ -30,11 +30,11 @@ export const ViewSecret = () => {
           {isLast ? (
             <Text size="xl" mb="sm">
               Lucky last! Pass the phone to{' '}
-              <strong>{getName(currentViewer)}</strong>!
+              <strong>{getName(currentViewer)}</strong>
             </Text>
           ) : (
             <Text size="xl" mb="sm">
-              Hey! Pass the phone to <strong>{getName(currentViewer)}</strong>!
+              Pass the phone to <strong>{getName(currentViewer)}</strong>
             </Text>
           )}
           <Card shadow="sm" padding="xl">
