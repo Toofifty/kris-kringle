@@ -1,4 +1,4 @@
-import { Button, Card, Group, Loader, Text } from '@mantine/core';
+import { Button, Card, Group, Loader, MediaQuery, Text } from '@mantine/core';
 import { useEffect } from 'react';
 import { Eye, EyeOff } from 'react-feather';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -49,7 +49,7 @@ export const Generate = () => {
           <Text size="xl">Done!</Text>
           <Text>How would you like to view the results?</Text>
           <Group style={{ alignItems: 'start' }}>
-            <Card shadow="sm" style={{ flex: 1 }}>
+            <Card shadow="sm" style={{ flex: 1, minWidth: 300 }}>
               <Group direction="column" position="center">
                 <Text>View all results. </Text>
                 <Text color="gray" size="sm">
@@ -65,7 +65,7 @@ export const Generate = () => {
                 </Button>
               </Group>
             </Card>
-            <Card shadow="sm" style={{ flex: 1 }}>
+            <Card shadow="sm" style={{ flex: 1, minWidth: 300 }}>
               <Group direction="column" position="center">
                 <Text>View results one at a time.</Text>
                 <Text color="gray" size="sm">

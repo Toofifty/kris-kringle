@@ -7,10 +7,13 @@ import {
   Checkbox,
   createStyles,
   Group,
+  MediaQuery,
   Text,
   ThemeIcon,
   UnstyledButton,
+  useMantineTheme,
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight, Edit, Edit2, Edit3, User } from 'react-feather';
 import { useNavigate } from 'react-router-dom';
@@ -35,6 +38,9 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export const ManageRelations = () => {
+  const theme = useMantineTheme();
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
+
   const { classes } = useStyles();
   const { kk, setKK } = useKKContext();
   const navigate = useNavigate();
@@ -109,69 +115,73 @@ export const ManageRelations = () => {
         are already giving to.
       </Text>
       <Group mt="lg" style={{ alignItems: 'start' }}>
-        <Card shadow="sm">
-          <Text color="gray" size="sm" mb="lg">
-            Select the person you want to manage.
-          </Text>
-          {Object.entries(kk.people!).map(([key, name]) => (
-            <UnstyledButton
-              key={key}
-              className={classes.button}
-              onClick={() => setSelectedPerson(key)}
-            >
-              <Group>
-                <ThemeIcon size={24} variant="light" color={randColor(key)}>
-                  <User size={16} />
-                </ThemeIcon>
-                <Text
-                  size="sm"
-                  style={{
-                    flexGrow: 1,
-                    fontWeight: selectedPerson === key ? 'bold' : undefined,
-                  }}
-                >
-                  {name}
-                </Text>
-                {selectedPerson === key && (
-                  <ActionIcon size={24} color="blue" variant="transparent">
-                    <Edit3 size={16} />
-                  </ActionIcon>
-                )}
-              </Group>
-            </UnstyledButton>
-          ))}
-        </Card>
-        <Card shadow="sm">
-          <Text color="gray" size="sm">
-            Uncheck people who they shouldn't be able to gift to.
-          </Text>
-          {!selectedPerson ? (
-            <Text color="gray" size="sm" mt="lg">
-              Select someone first.
+        <MediaQuery largerThan="sm" styles={{ flexGrow: 1 }}>
+          <Card shadow="sm">
+            <Text color="gray" size="sm" mb="lg">
+              Select the person you want to manage.
             </Text>
-          ) : (
-            <>
-              <Text size="sm" my="lg">
-                <strong>{selectedName}</strong> can't give to, or receive gifts
-                from:
-              </Text>{' '}
-              {Object.entries(kk.people!)
-                .filter(([key]) => key !== selectedPerson)
-                .map(([key, name]) => (
-                  <Checkbox
-                    my="lg"
-                    mx="sm"
-                    key={key}
-                    color={randColor(key)}
-                    checked={isGiftable(key)}
-                    label={name}
-                    onClick={() => toggleDisallow(key)}
-                    style={{ cursor: 'pointer' }}
-                  />
-                ))}
-            </>
-          )}
-        </Card>
+            {Object.entries(kk.people!).map(([key, name]) => (
+              <UnstyledButton
+                key={key}
+                className={classes.button}
+                onClick={() => setSelectedPerson(key)}
+              >
+                <Group>
+                  <ThemeIcon size={24} variant="light" color={randColor(key)}>
+                    <User size={16} />
+                  </ThemeIcon>
+                  <Text
+                    size="sm"
+                    style={{
+                      flexGrow: 1,
+                      fontWeight: selectedPerson === key ? 'bold' : undefined,
+                    }}
+                  >
+                    {name}
+                  </Text>
+                  {selectedPerson === key && (
+                    <ActionIcon size={24} color="blue" variant="transparent">
+                      <Edit3 size={16} />
+                    </ActionIcon>
+                  )}
+                </Group>
+              </UnstyledButton>
+            ))}
+          </Card>
+        </MediaQuery>
+        <MediaQuery largerThan="sm" styles={{ flexGrow: 1 }}>
+          <Card shadow="sm">
+            <Text color="gray" size="sm">
+              Uncheck people who they shouldn't be able to gift to.
+            </Text>
+            {!selectedPerson ? (
+              <Text color="gray" size="sm" mt="lg">
+                Select someone first.
+              </Text>
+            ) : (
+              <>
+                <Text size="sm" my="lg">
+                  <strong>{selectedName}</strong> can't give to, or receive
+                  gifts from:
+                </Text>{' '}
+                {Object.entries(kk.people!)
+                  .filter(([key]) => key !== selectedPerson)
+                  .map(([key, name]) => (
+                    <Checkbox
+                      my="lg"
+                      mx="sm"
+                      key={key}
+                      color={randColor(key)}
+                      checked={isGiftable(key)}
+                      label={name}
+                      onClick={() => toggleDisallow(key)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  ))}
+              </>
+            )}
+          </Card>
+        </MediaQuery>
       </Group>
     </>
   );
