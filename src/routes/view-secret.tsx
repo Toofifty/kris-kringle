@@ -72,9 +72,13 @@ export const ViewSecret = () => {
                   </Group>
                   {isLast ? (
                     <>
-                      <Text color="gray" size="sm" my="lg">
+                      <Text
+                        color="gray"
+                        size="sm"
+                        my="lg"
+                        style={{ maxWidth: 300, textAlign: 'center' }}
+                      >
                         Memorize who you're gifting to, then press the button
-                        <br />
                         below to end the session.
                       </Text>
                       <Button
@@ -90,8 +94,13 @@ export const ViewSecret = () => {
                     </>
                   ) : (
                     <>
-                      <Text color="gray" size="sm" my="lg">
-                        Memorize who you're gifting to before pressing <br />
+                      <Text
+                        color="gray"
+                        size="sm"
+                        my="lg"
+                        style={{ maxWidth: 300, textAlign: 'center' }}
+                      >
+                        Memorize who you're gifting to before pressing{' '}
                         <strong>continue</strong> and passing the phone to{' '}
                         <strong>{getName(nextViewer)}</strong>.
                       </Text>
