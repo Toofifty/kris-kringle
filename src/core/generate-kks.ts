@@ -1,5 +1,17 @@
 import { choose } from '../util/rand';
 
+export class NoConnectionError extends Error {
+  constructor(public uuid: string) {
+    super('No connection');
+  }
+}
+
+export class FailedToGenerateError extends Error {
+  constructor() {
+    super('Failed to generate');
+  }
+}
+
 export const generate = (
   people: string[],
   disallowedConnections: Record<string, string[]>
@@ -26,7 +38,7 @@ export const generate = (
     if (others.length === 0) {
       console.log('failed attempt at creating pairs');
       console.table(pairs);
-      throw new Error(`No possible connections for ${person}`);
+      throw new NoConnectionError(person);
     }
 
     pairs.push([person, choose(others)]);
@@ -36,7 +48,7 @@ export const generate = (
     console.log('failed attempt at creating pairs');
     console.table(pairs);
     debugger;
-    throw new Error(`Failed to generate pairs for ${people.length} people`);
+    throw new FailedToGenerateError();
   }
 
   return pairs;

@@ -87,7 +87,7 @@ const StepButton = ({
 };
 
 export const StepTracker = () => {
-  const { kk, setKK } = useKKContext();
+  const { kk } = useKKContext();
 
   return (
     <>

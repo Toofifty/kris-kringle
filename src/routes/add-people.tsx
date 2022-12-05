@@ -2,8 +2,8 @@ import {
   ActionIcon,
   Affix,
   Button,
-  Card,
   Group,
+  Stack,
   Text,
   TextInput,
   ThemeIcon,
@@ -12,12 +12,48 @@ import { useState } from 'react';
 import { ArrowRight, Delete, User } from 'react-feather';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
+import { FlatCard } from '../components/flat-card';
 
 import { useKKContext } from '../core/kk-context';
 import { randColor } from '../util/rand';
+import { useMobile } from '../util/use-mobile';
+
+interface PersonProps {
+  uuid: string;
+  name: string;
+  onDelete: () => void;
+}
+
+const Person = ({ uuid, name, onDelete }: PersonProps) => {
+  const mobile = useMobile();
+
+  return (
+    <Group noWrap>
+      <ThemeIcon
+        size={mobile ? 48 : 24}
+        variant="light"
+        color={randColor(uuid)}
+      >
+        <User size={mobile ? 32 : 16} />
+      </ThemeIcon>
+      <Text size={mobile ? 'md' : 'sm'} style={{ flexGrow: 1 }}>
+        {name}
+      </Text>
+      <ActionIcon
+        size={mobile ? 48 : 24}
+        color="red"
+        variant="transparent"
+        onClick={onDelete}
+      >
+        <Delete size={mobile ? 32 : 16} />
+      </ActionIcon>
+    </Group>
+  );
+};
 
 export const AddPeople = () => {
   const navigate = useNavigate();
+  const mobile = useMobile();
   const { kk, setKK } = useKKContext();
 
   const [people, setPeople] = useState<Record<string, string>>(kk.people ?? {});
@@ -28,6 +64,11 @@ export const AddPeople = () => {
     e.preventDefault();
     setPeople({ ...(people ?? {}), [uuid()]: newPerson });
     setNewPerson('');
+  };
+
+  const removePerson = (uuid: string) => {
+    const { [uuid]: _, ...rest } = people;
+    setPeople(rest);
   };
 
   return (
@@ -48,52 +89,39 @@ export const AddPeople = () => {
       <Text size="xl" mb="sm">
         Let's get started!
       </Text>
-      <Text color="gray" size="sm">
+      <Text color="light-gray" size="sm">
         Add the participants of your Kris Kringle below.
       </Text>
-      <Card shadow="sm" my="lg">
+      <FlatCard my="lg">
         {Object.keys(people).length === 0 && (
-          <Text size="sm" color="gray">
+          <Text
+            size={mobile ? 'md' : 'sm'}
+            p={mobile ? 'sm' : 0}
+            color="dimmed"
+          >
             You haven't added anyone yet.
           </Text>
         )}
-        <Group direction="column" grow style={{ minWidth: 300 }}>
-          {Object.entries(people).map(([key, name]) => (
-            <Group key={key} noWrap>
-              <ThemeIcon size={24} variant="light" color={randColor(key)}>
-                <User size={16} />
-              </ThemeIcon>
-              <Text size="sm" style={{ flexGrow: 1 }}>
-                {name}
-              </Text>
-              <ActionIcon
-                size={24}
-                color="red"
-                variant="transparent"
-                onClick={() =>
-                  setPeople(
-                    Object.fromEntries(
-                      Object.entries(people).filter(([, n]) => n !== name)
-                    )
-                  )
-                }
-              >
-                <Delete size={16} />
-              </ActionIcon>
-            </Group>
+        <Stack style={{ minWidth: 300 }}>
+          {Object.entries(people).map(([uuid, name]) => (
+            <Person
+              key={uuid}
+              uuid={uuid}
+              name={name}
+              onDelete={() => removePerson(uuid)}
+            />
           ))}
-        </Group>
-      </Card>
+        </Stack>
+      </FlatCard>
 
       <form onSubmit={addNewPerson}>
-        <Group>
+        <Group noWrap>
           <TextInput
             placeholder="Santa Claus"
             value={newPerson}
             onChange={(e) => setNewPerson(e.target.value)}
-            style={{ flexGrow: 1 }}
           />
-          <Button onClick={addNewPerson} color="green" style={{ flexGrow: 0 }}>
+          <Button onClick={addNewPerson} color="green">
             Add
           </Button>
         </Group>

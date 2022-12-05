@@ -8,7 +8,7 @@ export const Welcome = () => (
       <strong>Kris Kringle</strong>
     </Text>
     <Card shadow="sm" my="lg">
-      <Group direction="column">
+      <Group dir="column">
         <Text color="gray">
           Use this tool to generate random Kris Kringle pairings between your
           family and friends.

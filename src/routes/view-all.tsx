@@ -1,15 +1,11 @@
-import { Button, Card, Group, Text, ThemeIcon } from '@mantine/core';
+import { Button, Card, Group, Stack, Text } from '@mantine/core';
 import { RotateCcw, User } from 'react-feather';
 import { NavLink } from 'react-router-dom';
+import { Avatar } from '../components/avatar';
 import { useKKContext } from '../core/kk-context';
-import { randColor } from '../util/rand';
 
 export const ViewAll = () => {
   const { kk, setKK } = useKKContext();
-
-  const getName = (id: string) => {
-    return kk.people?.[id];
-  };
 
   return (
     <>
@@ -21,35 +17,17 @@ export const ViewAll = () => {
         the left.
       </Text>
       <Card shadow="sm" mb="lg">
-        <Group direction="column" style={{ minWidth: 300 }}>
+        <Stack>
           {kk.results!.map(([person, recipient]) => (
-            <Group key={person}>
-              <Group key={person} style={{ minWidth: 100 }}>
-                <ThemeIcon size={24} variant="light" color={randColor(person)}>
-                  <User size={16} />
-                </ThemeIcon>
-                <Text>
-                  <strong>{getName(person)}</strong>
-                </Text>
-              </Group>
+            <Group grow position="center" key={person}>
+              <Avatar id={person} type="santa" />
               <Text color="gray" size="sm">
                 is gifting to
               </Text>
-              <Group key={person} style={{ minWidth: 100 }}>
-                <ThemeIcon
-                  size={24}
-                  variant="light"
-                  color={randColor(recipient)}
-                >
-                  <User size={16} />
-                </ThemeIcon>
-                <Text>
-                  <strong>{getName(recipient)}</strong>
-                </Text>
-              </Group>
+              <Avatar id={recipient} type="giftee" />
             </Group>
           ))}
-        </Group>
+        </Stack>
       </Card>
       <Button
         component={NavLink}

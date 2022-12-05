@@ -2,48 +2,96 @@ import {
   ActionIcon,
   Affix,
   Button,
-  Card,
-  Center,
-  Checkbox,
   createStyles,
   Group,
   MediaQuery,
+  Stack,
   Text,
   ThemeIcon,
   UnstyledButton,
-  useMantineTheme,
 } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight, Edit, Edit2, Edit3, User } from 'react-feather';
+import { ArrowLeft, ArrowRight, Check, Edit3, User, X } from 'react-feather';
 import { useNavigate } from 'react-router-dom';
+import { Avatar } from '../components/avatar';
+import { FlatCard } from '../components/flat-card';
 import { useKKContext } from '../core/kk-context';
 import { randColor } from '../util/rand';
+import { useMobile } from '../util/use-mobile';
 
-const useStyles = createStyles((theme) => ({
+const useButtonStyles = createStyles((theme) => ({
   button: {
     display: 'block',
     width: '100%',
     padding: theme.spacing.xs,
     borderRadius: theme.radius.sm,
     color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-
-    '&:hover': {
-      backgroundColor:
-        theme.colorScheme === 'dark'
-          ? theme.colors.dark[6]
-          : theme.colors.gray[0],
-    },
   },
 }));
 
-export const ManageRelations = () => {
-  const theme = useMantineTheme();
-  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
+interface PersonProps {
+  uuid: string;
+  name: string;
+  selected: boolean;
+  options: number;
+  totalOptions: number;
+  onClick: () => void;
+}
 
-  const { classes } = useStyles();
+const Person = ({
+  uuid,
+  name,
+  selected,
+  options,
+  totalOptions,
+  onClick,
+}: PersonProps) => {
+  const { classes } = useButtonStyles();
+  const mobile = useMobile();
+
+  return (
+    <UnstyledButton className={classes.button} onClick={onClick}>
+      <Group>
+        {selected && mobile && (
+          <ActionIcon size={48} variant="transparent">
+            <ArrowLeft size={32} />
+          </ActionIcon>
+        )}
+        <ThemeIcon
+          size={mobile ? 48 : 24}
+          variant="light"
+          color={randColor(uuid)}
+        >
+          <User size={mobile ? 32 : 16} />
+        </ThemeIcon>
+        <Text inline size={mobile ? 'md' : 'sm'} style={{ flexGrow: 1 }}>
+          <Group spacing="xs">
+            <Text inline style={{ fontWeight: selected ? 'bold' : undefined }}>
+              {name}
+            </Text>
+            <Text inline color={options == 0 ? 'red' : 'dimmed'}>
+              {options === totalOptions
+                ? '(anyone)'
+                : `(${options} option${options === 1 ? '' : 's'})`}
+            </Text>
+          </Group>
+        </Text>
+        {selected && !mobile && (
+          <ActionIcon size={24} variant="transparent">
+            <Edit3 size={16} />
+          </ActionIcon>
+        )}
+      </Group>
+    </UnstyledButton>
+  );
+};
+
+export const ManageRelations = () => {
+  const mobile = useMobile();
+
   const { kk, setKK } = useKKContext();
   const navigate = useNavigate();
+  const { classes } = useButtonStyles();
 
   const [disallows, setDisallows] = useState<Record<string, string[]>>(
     kk.disallowedConnections ?? {}
@@ -53,12 +101,14 @@ export const ManageRelations = () => {
 
   const selectedName = selectedPerson && kk.people![selectedPerson];
 
+  const isDisallowed = (person: string, other: string) =>
+    other === person ||
+    disallows[person]?.includes(other) ||
+    disallows[other]?.includes(person);
+
   const isGiftable = (other: string) => {
     if (!selectedPerson) return false;
-    return (
-      !disallows[selectedPerson]?.includes(other) &&
-      !disallows[other]?.includes(selectedPerson)
-    );
+    return !isDisallowed(selectedPerson, other);
   };
 
   const toggleDisallow = (other: string) => {
@@ -108,80 +158,88 @@ export const ManageRelations = () => {
         </Group>
       </Affix>
       <Text size="xl" mb="sm">
-        Let me know who shouldn't be able to gift to who. (optional)
+        Any restrictions?
       </Text>
-      <Text color="gray" size="sm">
-        Useful if you want to make sure that a person can't gift to someone they
-        are already giving to.
+      <Text color="dimmed" size="sm">
+        You can prevent people from being matched with each other. For example,
+        you might not want a match that occured last year to happen again.
+        <br />
+        <br /> Skip this step if anyone can be matched with anyone else.
       </Text>
-      <Group mt="lg" style={{ alignItems: 'start' }}>
+      <Group style={{ alignItems: 'start' }} w={mobile ? '100%' : undefined}>
         <MediaQuery largerThan="sm" styles={{ flexGrow: 1 }}>
-          <Card shadow="sm">
-            <Text color="gray" size="sm" mb="lg">
-              Select the person you want to manage.
+          <FlatCard>
+            <Text color="dimmed" size="sm" mb="lg">
+              Select the person you want to manage
             </Text>
-            {Object.entries(kk.people!).map(([key, name]) => (
-              <UnstyledButton
-                key={key}
-                className={classes.button}
-                onClick={() => setSelectedPerson(key)}
-              >
-                <Group>
-                  <ThemeIcon size={24} variant="light" color={randColor(key)}>
-                    <User size={16} />
-                  </ThemeIcon>
-                  <Text
-                    size="sm"
-                    style={{
-                      flexGrow: 1,
-                      fontWeight: selectedPerson === key ? 'bold' : undefined,
-                    }}
-                  >
-                    {name}
-                  </Text>
-                  {selectedPerson === key && (
-                    <ActionIcon size={24} color="blue" variant="transparent">
-                      <Edit3 size={16} />
-                    </ActionIcon>
-                  )}
-                </Group>
-              </UnstyledButton>
-            ))}
-          </Card>
+            {Object.entries(kk.people!)
+              .filter(
+                ([uuid]) =>
+                  !mobile || !selectedPerson || selectedPerson === uuid
+              )
+              .map(([uuid, name]) => (
+                <Person
+                  key={uuid}
+                  uuid={uuid}
+                  name={name}
+                  selected={selectedPerson === uuid}
+                  options={
+                    Object.keys(kk.people!).filter(
+                      (other) => !isDisallowed(uuid, other)
+                    ).length
+                  }
+                  totalOptions={Object.keys(kk.people!).length - 1}
+                  onClick={() =>
+                    setSelectedPerson(
+                      selectedPerson === uuid ? undefined : uuid
+                    )
+                  }
+                />
+              ))}
+          </FlatCard>
         </MediaQuery>
-        <MediaQuery largerThan="sm" styles={{ flexGrow: 1 }}>
-          <Card shadow="sm">
-            <Text color="gray" size="sm">
-              Uncheck people who they shouldn't be able to gift to.
-            </Text>
-            {!selectedPerson ? (
-              <Text color="gray" size="sm" mt="lg">
-                Select someone first.
-              </Text>
-            ) : (
-              <>
-                <Text size="sm" my="lg">
-                  <strong>{selectedName}</strong> can't give to, or receive
-                  gifts from:
+        {selectedPerson && (
+          <MediaQuery largerThan="sm" styles={{ flexGrow: 1 }}>
+            <FlatCard>
+              <Stack spacing="sm">
+                <Text color="dimmed" size="sm">
+                  <strong>{selectedName}</strong> can match with...
                 </Text>{' '}
                 {Object.entries(kk.people!)
-                  .filter(([key]) => key !== selectedPerson)
-                  .map(([key, name]) => (
-                    <Checkbox
-                      my="lg"
-                      mx="sm"
-                      key={key}
-                      color={randColor(key)}
-                      checked={isGiftable(key)}
-                      label={name}
-                      onClick={() => toggleDisallow(key)}
-                      style={{ cursor: 'pointer' }}
-                    />
+                  .filter(([uuid]) => uuid !== selectedPerson)
+                  .map(([uuid]) => (
+                    <UnstyledButton
+                      p="xs"
+                      sx={(theme) => ({
+                        backgroundColor: isGiftable(uuid)
+                          ? theme.colorScheme === 'dark'
+                            ? theme.colors.dark[5]
+                            : theme.colors.gray[0]
+                          : 'transparent',
+                        borderRadius: theme.radius.sm,
+                      })}
+                      onClick={() => toggleDisallow(uuid)}
+                      className={classes.button}
+                    >
+                      <Group>
+                        <ActionIcon
+                          size={mobile ? 48 : 24}
+                          variant="transparent"
+                        >
+                          {isGiftable(uuid) ? (
+                            <Check size={mobile ? 32 : 16} color="green" />
+                          ) : (
+                            <X size={mobile ? 32 : 16} color="red" />
+                          )}
+                        </ActionIcon>
+                        <Avatar id={uuid} size={mobile ? 'lg' : 'sm'} />
+                      </Group>
+                    </UnstyledButton>
                   ))}
-              </>
-            )}
-          </Card>
-        </MediaQuery>
+              </Stack>
+            </FlatCard>
+          </MediaQuery>
+        )}
       </Group>
     </>
   );

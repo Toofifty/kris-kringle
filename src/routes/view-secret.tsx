@@ -1,9 +1,9 @@
-import { Button, Card, Center, Group, Text, ThemeIcon } from '@mantine/core';
+import { Button, Card, Center, Group, Stack, Text } from '@mantine/core';
 import { useState } from 'react';
 import { ArrowRight, Check, User } from 'react-feather';
 import { useNavigate } from 'react-router-dom';
+import { Avatar } from '../components/avatar';
 import { useKKContext } from '../core/kk-context';
-import { randColor } from '../util/rand';
 
 export const ViewSecret = () => {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export const ViewSecret = () => {
   return (
     <>
       <Center>
-        <Group direction="column" position="center">
+        <Stack align="center">
           {isLast ? (
             <Text size="xl" mb="sm">
               Lucky last! Pass the phone to{' '}
@@ -37,20 +37,11 @@ export const ViewSecret = () => {
               Pass the phone to <strong>{getName(currentViewer)}</strong>
             </Text>
           )}
-          <Card shadow="sm" padding="xl">
-            <Group direction="column" position="center">
-              <Group>
-                <ThemeIcon
-                  size={48}
-                  variant="light"
-                  color={randColor(currentViewer)}
-                >
-                  <User size={32} />
-                </ThemeIcon>
-                <Text size="lg">
-                  <strong>{getName(currentViewer)}</strong>, you're gifting
-                  to...
-                </Text>
+          <Card shadow="sm" p="xl">
+            <Stack align="center">
+              <Group spacing={0}>
+                <Avatar id={currentViewer} type="santa" size="lg" />
+                <Text size="lg">, you're gifting to...</Text>
               </Group>
               {!revealed ? (
                 <Button color="red" onClick={() => setRevealed(true)}>
@@ -58,17 +49,9 @@ export const ViewSecret = () => {
                 </Button>
               ) : (
                 <>
-                  <Group>
-                    <ThemeIcon
-                      size={48}
-                      variant="light"
-                      color={randColor(currentGiftee)}
-                    >
-                      <User size={32} />
-                    </ThemeIcon>
-                    <Text size="lg">
-                      <strong>{getName(currentGiftee)}</strong>!
-                    </Text>
+                  <Group spacing={0}>
+                    <Avatar id={currentGiftee} type="giftee" size="lg" />
+                    <Text size="lg">!</Text>
                   </Group>
                   {isLast ? (
                     <>
@@ -118,9 +101,9 @@ export const ViewSecret = () => {
                   )}
                 </>
               )}
-            </Group>
+            </Stack>
           </Card>
-        </Group>
+        </Stack>
       </Center>
     </>
   );
