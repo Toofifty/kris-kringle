@@ -1,6 +1,8 @@
 import { Button, Card, Group, Stack, Text } from '@mantine/core';
-import { RotateCcw, User } from 'react-feather';
+import { RotateCcw } from 'react-feather';
 import { NavLink } from 'react-router-dom';
+import { FlatCard } from '~/components';
+import { URLs } from '~/urls';
 import { Avatar } from '../components/avatar';
 import { useKKContext } from '../core/kk-context';
 
@@ -16,10 +18,10 @@ export const ViewAll = () => {
         You can go back to change settings at any time using the navigation on
         the left.
       </Text>
-      <Card shadow="sm" mb="lg">
+      <FlatCard mb="lg" miw={400}>
         <Stack>
           {kk.results!.map(([person, recipient]) => (
-            <Group grow position="center" key={person}>
+            <Group grow key={person}>
               <Avatar id={person} type="santa" />
               <Text color="gray" size="sm">
                 is gifting to
@@ -28,7 +30,7 @@ export const ViewAll = () => {
             </Group>
           ))}
         </Stack>
-      </Card>
+      </FlatCard>
       <Button
         component={NavLink}
         leftIcon={<RotateCcw size={16} />}
@@ -36,7 +38,7 @@ export const ViewAll = () => {
         onClick={() => {
           setKK({ ...kk, results: [] });
         }}
-        to="/generate"
+        to={URLs.Generate}
       >
         Regenerate
       </Button>

@@ -1,4 +1,4 @@
-import { choose } from '../util/rand';
+import { choose, shuffle } from '~/util/rand';
 
 export class NoConnectionError extends Error {
   constructor(public uuid: string) {
@@ -14,29 +14,33 @@ export class FailedToGenerateError extends Error {
 
 export const generate = (
   people: string[],
-  disallowedConnections: Record<string, string[]>
+  disallowedConnections: Record<string, string[]>,
+  force?: boolean
 ): [string, string][] => {
   const pairs: [string, string][] = [];
 
-  const isDisallowed = (person: string, other: string) => {
-    return (
-      disallowedConnections[person]?.includes(other) ||
-      disallowedConnections[other]?.includes(person)
-    );
-  };
+  const isDisallowed = (person: string, other: string) =>
+    disallowedConnections[person]?.includes(other) ||
+    disallowedConnections[other]?.includes(person);
 
   // brute force!
-  people.forEach((person) => {
+  shuffle(people).forEach((person, i) => {
     const others = people
       // not this person
       .filter((other) => other !== person)
-      // not disallowed
-      .filter((other) => !isDisallowed(person, other))
       // not already paired
-      .filter((other) => !pairs.some((pair) => pair[1] === other));
+      .filter((other) => !pairs.some((pair) => pair[1] === other))
+      // not disallowed
+      // if forcing, ignore rule for the last person
+      .filter(
+        (other) =>
+          !isDisallowed(person, other) || (force && i === people.length - 1)
+      );
 
     if (others.length === 0) {
-      console.log('failed attempt at creating pairs');
+      console.log(
+        `failed attempt at creating pairs ${force ? '(forced)' : ''}`
+      );
       console.table(pairs);
       throw new NoConnectionError(person);
     }

@@ -1,24 +1,25 @@
 import {
-  Affix,
   Alert,
   Button,
   Card,
   Group,
   Loader,
-  MediaQuery,
+  Space,
   Stack,
   Text,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-import { AlertCircle, ArrowLeft, Eye, EyeOff } from 'react-feather';
+import { AlertCircle, ArrowLeft, Eye, EyeOff, RefreshCcw } from 'react-feather';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { FlatCard } from '../components/flat-card';
+
+import { ActionAffix, FlatCard } from '~/components';
+import { URLs } from '~/urls';
 import {
   FailedToGenerateError,
   generate,
   NoConnectionError,
-} from '../core/generate-kks';
-import { useKKContext } from '../core/kk-context';
+} from '~/core/generate-kks';
+import { useKKContext } from '~/core/kk-context';
 
 const ATTEMPTS = 10;
 
@@ -30,7 +31,7 @@ export const Generate = () => {
 
   const attemptToGenerate = () => {
     setError(undefined);
-    setKK({ ...kk, results: undefined });
+    setKK((prev) => ({ ...prev, results: undefined }));
     setTimeout(async () => {
       let attempts = 0;
       while (attempts < ATTEMPTS) {
@@ -38,36 +39,29 @@ export const Generate = () => {
         console.log(attempts);
         try {
           const results = generate(
-            Object.keys(kk.people!),
-            kk.disallowedConnections!
+            Object.keys(kk.individuals!),
+            kk.disallowedConnections!,
+            kk.force
           );
           setKK({ ...kk, results });
           console.table(results);
           // this indicates "regenerate" was clicked
           if (results!.length === 0 && kk.view) {
-            navigate('/results');
+            navigate(URLs.Results);
           }
           return;
         } catch (e) {
           if (e instanceof NoConnectionError) {
             setError(
               <Text>
-                <strong>{kk.people?.[e.uuid]}</strong> had no possible
+                <strong>{kk.individuals?.[e.uuid]}</strong> had no possible
                 connections.
-                <br />
+                <Space h="sm" />
                 The restrictions provided may have been too strict - try
                 removing some.
-              </Text>
-            );
-            return;
-          }
-
-          if (e instanceof FailedToGenerateError) {
-            setError(
-              <Text>
-                Failed to generate after trying for a really long time... I
-                don't really know why it didn't work this time. I guess you can
-                try again and see if it works?
+                <Space h="sm" />
+                You can also <strong>force it</strong> to allow the algorithm to
+                ignore restrictions where needed.
               </Text>
             );
             return;
@@ -99,17 +93,27 @@ export const Generate = () => {
   if (error) {
     return (
       <>
-        <Affix position={{ bottom: 20, right: 20 }}>
+        <ActionAffix>
           <Group>
             <Button
               color="gray"
               leftIcon={<ArrowLeft />}
-              onClick={() => navigate('/add-people')}
+              onClick={() => navigate(URLs.Participants)}
             >
-              Let me try again
+              Change settings
+            </Button>
+            <Button
+              color="red"
+              leftIcon={<AlertCircle />}
+              onClick={() => {
+                setKK((prev) => ({ ...prev, force: true }));
+                attemptToGenerate();
+              }}
+            >
+              Force it
             </Button>
           </Group>
-        </Affix>
+        </ActionAffix>
         <Alert icon={<AlertCircle />} title="Error" color="red">
           {error}
         </Alert>
@@ -124,48 +128,43 @@ export const Generate = () => {
           <Text size="xl">Done!</Text>
           <Text>How would you like to view the results?</Text>
           <Group style={{ alignItems: 'start' }}>
-            <Card shadow="sm" style={{ flex: 1, minWidth: 300 }}>
+            <FlatCard style={{ flex: 1, minWidth: 300 }}>
               <Stack>
-                <Text>View all results. </Text>
-                <Text color="gray" size="sm">
-                  There's no secrets here.
-                </Text>
                 <Button
                   component={NavLink}
-                  to="/results"
+                  to={URLs.Results}
                   leftIcon={<Eye size={16} />}
                   onClick={() => setViewMode('all')}
                 >
                   View all
                 </Button>
-              </Stack>
-            </Card>
-            <Card shadow="sm" style={{ flex: 1, minWidth: 300 }}>
-              <Stack>
-                <Text>View results one at a time.</Text>
                 <Text color="gray" size="sm">
-                  Pass your phone around so people can see who they're gifting
-                  to, privately.
+                  Show all matches at once.
                 </Text>
+              </Stack>
+            </FlatCard>
+            <FlatCard style={{ flex: 1, minWidth: 300 }}>
+              <Stack>
                 <Button
                   component={NavLink}
-                  to="/results"
+                  to={URLs.Results}
                   leftIcon={<EyeOff size={16} />}
                   onClick={() => setViewMode('secret')}
                 >
                   View privately
                 </Button>
+                <Text color="gray" size="sm">
+                  Pass your phone around so people can see who they're gifting
+                  to in private.
+                </Text>
               </Stack>
-            </Card>
+            </FlatCard>
           </Group>
         </>
       ) : (
         <FlatCard my="lg">
           <Stack align="center" spacing="xl" my="xl">
             <Text size="xl">Generating...</Text>
-            <Text size="lg" color="dimmed">
-              Sit tight! This won't take long
-            </Text>
             <Loader />
           </Stack>
         </FlatCard>

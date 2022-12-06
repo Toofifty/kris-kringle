@@ -6,6 +6,7 @@ import {
 import { useMediaQuery } from '@mantine/hooks';
 import { RefreshCcw } from 'react-feather';
 import { useNavigate } from 'react-router-dom';
+import { URLs } from '~/urls';
 import { useKKContext } from '../core/kk-context';
 import { StepTracker } from './step-tracker';
 
@@ -41,10 +42,10 @@ export const Navbar = ({ open }: NavbarProps) => {
           }}
           onClick={() => {
             setKK({});
-            navigate('/');
+            navigate(URLs.Welcome);
           }}
           leftIcon={<RefreshCcw size={16} />}
-          disabled={!kk.people}
+          disabled={!kk.individuals}
         >
           Start over
         </Button>

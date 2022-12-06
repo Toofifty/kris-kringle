@@ -14,7 +14,7 @@ interface AvatarProps {
 export const Avatar = ({ id, type = 'user', size = 'sm' }: AvatarProps) => {
   const { kk } = useKKContext();
 
-  const getName = (id: string) => kk.people?.[id];
+  const getName = (id: string) => kk.individuals?.[id];
 
   const Icon = {
     santa: Santa,

@@ -1,11 +1,19 @@
-import { Button, Card, Group, Text } from '@mantine/core';
+import { Button, Card, Group, Text, ThemeIcon } from '@mantine/core';
 import { ArrowRight } from 'react-feather';
 import { NavLink } from 'react-router-dom';
+import { URLs } from '~/urls';
+
+import { ReactComponent as Santa } from '../assets/santa.svg';
 
 export const Welcome = () => (
   <>
     <Text size="xl">
-      <strong>Kris Kringle</strong>
+      <strong>
+        Kris Kringle{' '}
+        <ThemeIcon size={48} variant="light" color="red">
+          <Santa style={{ transform: 'scale(2)' }} />
+        </ThemeIcon>
+      </strong>
     </Text>
     <Card shadow="sm" my="lg">
       <Group dir="column">
@@ -26,7 +34,7 @@ export const Welcome = () => (
     <Button
       size="md"
       component={NavLink}
-      to="/add-people"
+      to={URLs.Participants}
       rightIcon={<ArrowRight size={16} />}
     >
       Get started

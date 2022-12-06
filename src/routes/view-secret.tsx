@@ -2,6 +2,7 @@ import { Button, Card, Center, Group, Stack, Text } from '@mantine/core';
 import { useState } from 'react';
 import { ArrowRight, Check, User } from 'react-feather';
 import { useNavigate } from 'react-router-dom';
+import { URLs } from '~/urls';
 import { Avatar } from '../components/avatar';
 import { useKKContext } from '../core/kk-context';
 
@@ -10,7 +11,7 @@ export const ViewSecret = () => {
   const { kk } = useKKContext();
 
   const getName = (id: string) => {
-    return kk.people?.[id];
+    return kk.individuals?.[id];
   };
 
   const [personId, setPersonId] = useState(0);
@@ -68,7 +69,7 @@ export const ViewSecret = () => {
                         color="blue"
                         onClick={() => {
                           setRevealed(false);
-                          navigate('/');
+                          navigate(URLs.Welcome);
                         }}
                         rightIcon={<Check size={16} />}
                       >

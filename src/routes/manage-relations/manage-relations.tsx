@@ -13,11 +13,14 @@ import {
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, Edit3, User, X } from 'react-feather';
 import { useNavigate } from 'react-router-dom';
-import { Avatar } from '../components/avatar';
-import { FlatCard } from '../components/flat-card';
-import { useKKContext } from '../core/kk-context';
-import { randColor } from '../util/rand';
-import { useMobile } from '../util/use-mobile';
+
+import { URLs } from '~/urls';
+import { Avatar } from '~/components/avatar';
+import { FlatCard } from '~/components/flat-card';
+import { useKKContext } from '~/core/kk-context';
+import { randColor } from '~/util/rand';
+import { useMobile } from '~/util/use-mobile';
+import { useDisallowConnections } from './hooks';
 
 const useButtonStyles = createStyles((theme) => ({
   button: {
@@ -89,46 +92,19 @@ const Person = ({
 export const ManageRelations = () => {
   const mobile = useMobile();
 
-  const { kk, setKK } = useKKContext();
+  const { kk } = useKKContext();
   const navigate = useNavigate();
   const { classes } = useButtonStyles();
 
-  const [disallows, setDisallows] = useState<Record<string, string[]>>(
-    kk.disallowedConnections ?? {}
-  );
+  const { isDisallowed, toggle } = useDisallowConnections();
 
   const [selectedPerson, setSelectedPerson] = useState<string>();
 
-  const selectedName = selectedPerson && kk.people![selectedPerson];
-
-  const isDisallowed = (person: string, other: string) =>
-    other === person ||
-    disallows[person]?.includes(other) ||
-    disallows[other]?.includes(person);
+  const selectedName = selectedPerson && kk.individuals![selectedPerson];
 
   const isGiftable = (other: string) => {
     if (!selectedPerson) return false;
     return !isDisallowed(selectedPerson, other);
-  };
-
-  const toggleDisallow = (other: string) => {
-    if (!selectedPerson) return;
-    if (disallows[selectedPerson]?.includes(other)) {
-      setDisallows((disallows) => ({
-        ...disallows,
-        [selectedPerson]: disallows[selectedPerson]?.filter((p) => p !== other),
-      }));
-    } else if (disallows[other]?.includes(selectedPerson)) {
-      setDisallows((disallows) => ({
-        ...disallows,
-        [other]: disallows[other]?.filter((p) => p !== selectedPerson),
-      }));
-    } else {
-      setDisallows({
-        ...disallows,
-        [selectedPerson]: [...(disallows[selectedPerson] ?? []), other],
-      });
-    }
   };
 
   return (
@@ -138,7 +114,7 @@ export const ManageRelations = () => {
           <Button
             color="gray"
             leftIcon={<ArrowLeft />}
-            onClick={() => navigate('/add-people')}
+            onClick={() => navigate(URLs.Participants)}
           >
             I forgot someone
           </Button>
@@ -146,11 +122,7 @@ export const ManageRelations = () => {
             color="blue"
             rightIcon={<ArrowRight />}
             onClick={() => {
-              setKK({
-                ...kk,
-                disallowedConnections: disallows,
-              });
-              navigate('/generate');
+              navigate(URLs.Generate);
             }}
           >
             Done
@@ -172,7 +144,7 @@ export const ManageRelations = () => {
             <Text color="dimmed" size="sm" mb="lg">
               Select the person you want to manage
             </Text>
-            {Object.entries(kk.people!)
+            {Object.entries(kk.individuals!)
               .filter(
                 ([uuid]) =>
                   !mobile || !selectedPerson || selectedPerson === uuid
@@ -184,11 +156,11 @@ export const ManageRelations = () => {
                   name={name}
                   selected={selectedPerson === uuid}
                   options={
-                    Object.keys(kk.people!).filter(
+                    Object.keys(kk.individuals!).filter(
                       (other) => !isDisallowed(uuid, other)
                     ).length
                   }
-                  totalOptions={Object.keys(kk.people!).length - 1}
+                  totalOptions={Object.keys(kk.individuals!).length - 1}
                   onClick={() =>
                     setSelectedPerson(
                       selectedPerson === uuid ? undefined : uuid
@@ -205,7 +177,7 @@ export const ManageRelations = () => {
                 <Text color="dimmed" size="sm">
                   <strong>{selectedName}</strong> can match with...
                 </Text>{' '}
-                {Object.entries(kk.people!)
+                {Object.entries(kk.individuals!)
                   .filter(([uuid]) => uuid !== selectedPerson)
                   .map(([uuid]) => (
                     <UnstyledButton
@@ -218,7 +190,7 @@ export const ManageRelations = () => {
                           : 'transparent',
                         borderRadius: theme.radius.sm,
                       })}
-                      onClick={() => toggleDisallow(uuid)}
+                      onClick={() => toggle(selectedPerson, uuid)}
                       className={classes.button}
                     >
                       <Group>

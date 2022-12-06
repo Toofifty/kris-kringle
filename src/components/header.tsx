@@ -5,12 +5,15 @@ import {
   Header as MantineHeader,
   MediaQuery,
   Text,
+  ThemeIcon,
   UnstyledButton,
   useMantineColorScheme,
   useMantineTheme,
 } from '@mantine/core';
 import { Moon, Sun } from 'react-feather';
 import { NavLink } from 'react-router-dom';
+
+import { ReactComponent as Santa } from '../assets/santa.svg';
 
 interface HeaderProps {
   showNav: boolean;
@@ -34,7 +37,12 @@ export const Header = ({ showNav, toggleNav }: HeaderProps) => {
           />
         </MediaQuery>
         <UnstyledButton component={NavLink} to="/">
-          <Text>kris.kringle</Text>
+          <Text color="red">
+            <ThemeIcon variant="light" color="red">
+              <Santa />
+            </ThemeIcon>{' '}
+            <strong>kris.kringle</strong>
+          </Text>
         </UnstyledButton>
         <ActionIcon
           variant="light"

@@ -10,13 +10,13 @@ import {
 import {
   ArrowLeft,
   Check,
-  Circle,
   ShoppingBag,
   Shuffle,
   UserPlus,
   Users,
 } from 'react-feather';
 import { useKKContext } from '../core/kk-context';
+import { URLs } from '~/urls';
 
 const useStyles = createStyles(
   (theme, { available }: { available: boolean }) => ({
@@ -92,34 +92,34 @@ export const StepTracker = () => {
   return (
     <>
       <StepButton
-        to="/add-people"
+        to={URLs.Participants}
         icon={<UserPlus size={16} />}
         color="green"
         available
-        done={!!kk.people && Object.keys(kk.people).length > 1}
+        done={!!kk.individuals && Object.keys(kk.individuals).length > 1}
       >
         Add people
       </StepButton>
       <StepButton
-        to="/manage-relations"
+        to={URLs.ManageRelations}
         icon={<Users size={16} />}
         color="red"
-        available={!!kk.people}
+        available={!!kk.individuals}
         done={!!kk.disallowedConnections}
       >
         Manage relations
       </StepButton>
       <StepButton
-        to="/generate"
+        to={URLs.Generate}
         icon={<Shuffle size={16} />}
         color="blue"
-        available={!!kk.people && !!kk.disallowedConnections}
+        available={!!kk.individuals && !!kk.disallowedConnections}
         done={!!kk.results}
       >
         Generate
       </StepButton>
       <StepButton
-        to="/results"
+        to={URLs.Results}
         icon={<ShoppingBag size={16} />}
         color="violet"
         available={!!kk.results}

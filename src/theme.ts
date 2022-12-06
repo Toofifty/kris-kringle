@@ -2,6 +2,7 @@ import { MantineThemeOverride } from '@mantine/core';
 
 const theme: MantineThemeOverride = {
   cursorType: 'pointer',
+  fontFamily: 'Verdana, Noto, sans-serif',
   components: {
     Button: {
       styles: (theme) => ({
